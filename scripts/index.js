@@ -13,7 +13,7 @@
 
 const cardList = document.querySelector('.places__list');
 
-//Задаем функцию создания карточки и передаем ей функцию удаления карточки в качестве колбэка
+//Задаем функцию создания карточки, навешиваем обработчик события
 
 function createCard(item){
     const cardTemplate = document.querySelector('#card-template').content;
@@ -40,8 +40,8 @@ initialCards.forEach((item) => {
 
 //Создаем функцию удаления карточек со страницы
 
-function deleteCard(card){
-    card.remove();
+function deleteCard(item){
+    item.remove();
 }
 
 
