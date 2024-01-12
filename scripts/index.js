@@ -11,17 +11,24 @@
 
 //Создаем объект из элемента HTML
 
-const cardList = document.querySelector('.places__list');
+const cardsContainer = document.querySelector('.places__list');
+
+//Находим в разметке шаблон карточки, забираем его содержимое
+
+const cardTemplate = document.querySelector('#card-template').content;
 
 //Задаем функцию создания карточки, навешиваем обработчик события
 
-function createCard(item){
-    const cardTemplate = document.querySelector('#card-template').content;
+function createCard(item, deleteCard){
+    
     const newCardElement = cardTemplate.querySelector('.card').cloneNode(true);
     
     newCardElement.querySelector('.card__image').src = item.link;
-    newCardElement.querySelector('.card__image').alt = item.name;
-    newCardElement.querySelector('.card__title').textContent = item.name;
+
+    const cardName = item.name;
+    
+    newCardElement.querySelector('.card__image').alt = cardName;
+    newCardElement.querySelector('.card__title').textContent = cardName;
 
     const deleteButton = newCardElement.querySelector('.card__delete-button');
     deleteButton.addEventListener('click',() => deleteCard(newCardElement));
@@ -34,7 +41,7 @@ function createCard(item){
 
 initialCards.forEach((item) => {
     const card = createCard(item, deleteCard);
-    cardList.append(card);
+    cardsContainer.append(card);
 })
 
 
