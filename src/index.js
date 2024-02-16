@@ -1,209 +1,136 @@
-//В файле index.js должны остаться:
-//объявления и инициализация глобальных констант и переменных с DOM-элементами страницы,
-//обработчики событий (при открытии и закрытии попапов; при отправке форм; обработчик, открывающий 
-//попап при клике по изображению карточки);
-//вызовы других функций, подключённых из созданных модулей, которым нужно будет передавать объявленные
-//здесь переменные и обработчики.
-//вызов функции создания карточки должен находиться в файле index.js, но само объявление функции — в card.js.
+//импорт главного файла стилей
+import "./pages/index.css";
 
-//Определение глобальных переменных
+//импорт функций
+import { createCard, deleteCard } from "./scripts/card.js";
+import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 
+//импорт массива начальных карточек
+import { initialCards } from "./scripts/cards.js";
 
+//определение переменных
+const cardsContainer = document.querySelector(".places__list");
+const popup = document.querySelector(".popup");
 
-const cardsContainer = document.querySelector('.places__list');
-
-
-
-//импорт главного файла стилей 
-import './pages/index.css';
-
-//импорт функций 
-import {createCard, deleteCard, cardImageZoomUp} from './scripts/cards.js';
-
-//импорт переменных
-import {initialCards} from './scripts/cards.js';
-
-
-
-//добавляем начальные карточки на страницу, вызывая функцию createCard
-
+//добавляем начальные карточки на страницу
 initialCards.forEach((item) => {
-    const card = createCard(item, deleteCard);
-    cardsContainer.append(card);
-})
-
-
-
-
-
-
-
-
-
-
-// РАБОТАЕМ С ПОПАПАМИ И ФОРМАМИ
-
-
-
-//Работаем с попапом редактирования профиля
-
-const popup = document.querySelector('.popup');
-const popupEditProfile = document.querySelector('.popup_type_edit');
-const profileEditButton = document.querySelector('.profile__edit-button');
-const popupEditProfileCloseButton = popupEditProfile.querySelector('.popup__close');
-let profileTitle = document.querySelector('.profile__title');
-let profileDescription = document.querySelector('.profile__description');
-
-
-// Функция открытия попапа
-export const openModal = function(popup) {
-    popup.classList.add('popup_is-opened');
-    document.addEventListener('keydown', closePopupByEsc)
-} 
-
-//Функция закрытия попапа
-const closeModal = function(popup) {
-    popup.classList.remove('popup_is-opened');
-    document.removeEventListener('keydown', closePopupByEsc);
-}
-
-// слушатель кнопки открытия попапа редактирования профиля
-profileEditButton.addEventListener('click', function() {
-    nameInput.value = profileTitle.textContent;
-    jobInput.value = profileDescription.textContent;
-    openModal(popupEditProfile);
+  const card = createCard(item, deleteCard);
+  cardsContainer.append(card);
 });
 
+// ПОПАП РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
-// слушатель кнопки закрытия попапа Редактирования профиля
-popupEditProfileCloseButton.addEventListener('click', function() {
-    closeModal(popupEditProfile);
-    
+//выбираем элементы для работы с попапом редактирования профиля
+const popupEditProfile = document.querySelector(".popup_type_edit");
+const profileEditButton = document.querySelector(".profile__edit-button");
+const popupEditProfileCloseButton =
+  popupEditProfile.querySelector(".popup__close");
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+
+// обработчик открытия попапа редактирования профиля
+profileEditButton.addEventListener("click", function () {
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+  openModal(popupEditProfile);
 });
 
-
-
-//ЗАКРЫТИЕ ПОПАПОВ
-
-
-// Функция закрытия попапа по клику на оверлэй
-
-
-
-const closePopupByOverlay = function (evt){
-    const openedPopup = document.querySelector('.popup_is-opened')
-
-    if(evt.target.classList.contains('popup')){
-    closeModal(openedPopup)
-}};
-
-
-// Обработчик события закрытия попапа по клику на оверлэй
-
-popupEditProfile.addEventListener('click', (evt) => {
-    closePopupByOverlay (evt);
+// обработчик закрытия попапа редактирования профиля по клику на кнопку
+popupEditProfileCloseButton.addEventListener("click", function () {
+  closeModal(popupEditProfile);
 });
 
+// Обработчик события закрытия попапа редактирования профиля по клику на оверлэй
+popupEditProfile.addEventListener("click", (evt) => {
+  closePopupByOverlay(evt);
+});
 
+// выбираем элементы формы ввода данных попапа редактирования профиля
+const formElement = document.querySelector(".popup__form");
+const nameInput = document.querySelector(".popup__input_type_name");
+const jobInput = document.querySelector(".popup__input_type_description");
 
-
-
-
-
-
-
-// Функция закрытия попапа при нажатии на клавишу ESC
-
-const closePopupByEsc = function(evt) {
-    const openedPopup = document.querySelector('.popup_is-opened');
-    if(evt.key === 'Escape' && !evt.target.classList.contains('popup_is-opened')){
-        closeModal(openedPopup);  
-    }
-};
-
-
-
-
-
-
-// обработчик события submit
-
-// Находим форму и ее поля в DOM
-const formElement = document.querySelector('.popup__form')
-export const nameInput = document.querySelector('.popup__input_type_name')
-export const jobInput = document.querySelector('.popup__input_type_description')
-
-// Обработчик «отправки» формы
+// обработчик отправки данных из формы попапа редактирования профиля
 function handleFormSubmit(evt) {
-    evt.preventDefault();
-    profileTitle.textContent = nameInput.value;
-    profileDescription.textContent = jobInput.value;
-    closeModal(popup);
+  evt.preventDefault();
+  profileTitle.textContent = nameInput.value;
+  profileDescription.textContent = jobInput.value;
+  closeModal(popup);
 }
 
-// Обработчик события нажатия кнопки submit на форме редактирования профиля
-formElement.addEventListener('submit', handleFormSubmit);
+// обработчик нажатия кнопки submit на форме редактирования профиля
+formElement.addEventListener("submit", handleFormSubmit);
 
+// ПОПАП ДОБАВЛЕНИЯ НОВЫХ КАРТОЧЕК
 
+// выбираем элементы для работы с попапом добавления новых карточек
+const newCardAddButton = document.querySelector(".profile__add-button");
+const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupNewCardCloseButton = popupNewCard.querySelector(".popup__close");
 
-
-
-
-// Попап добавления новых карточек
-
-const newCardAddButton = document.querySelector('.profile__add-button');
-const popupNewCard = document.querySelector('.popup_type_new-card');
-const popupNewCardCloseButton = popupNewCard.querySelector('.popup__close');
-
-// слушатель кнопки закрытия попапа добавления новых карточек
-popupNewCardCloseButton.addEventListener('click', function() {
-    closeModal(popupNewCard);
-    
+// Обработчик открытия попапа добавления новой карточки
+newCardAddButton.addEventListener("click", function () {
+  openModal(popupNewCard);
 });
 
-// Обработчик события открытия попапа добавления новой карточки
-newCardAddButton.addEventListener('click', function() {
-    openModal(popupNewCard);
+// обработчик кнопки закрытия попапа добавления новой карточки по клику на кнопку
+popupNewCardCloseButton.addEventListener("click", function () {
+  closeModal(popupNewCard);
 });
 
-const inputCardName = document.querySelector('.popup__input_type_card-name');
-const inputCardPictureUrl = document.querySelector('.popup__input_type_url');
-const popupNewCardForm = document.forms['new-place'];
+// Обработчик события закрытия попапа добавления новой карточки по клику на оверлей
+popupNewCard.addEventListener("click", (evt) => {
+  closePopupByOverlay(evt);
+});
+
+//выбираем элементы формы ввода данных попапа добавления новой карточки
+const inputCardName = document.querySelector(".popup__input_type_card-name");
+const inputCardPictureUrl = document.querySelector(".popup__input_type_url");
+const popupNewCardForm = document.forms["new-place"];
 
 // Функция добавления новой карточки по нажатию на кнопку "+"
 function addNewCard(evt) {
-    evt.preventDefault();
-    const cardData = {};
-    cardData.name = inputCardName.value;
-    cardData.link = inputCardPictureUrl.value;
-    const newCard = createCard(cardData, deleteCard);
-    cardsContainer.prepend(newCard);
-    popupNewCardForm.reset();
-    closeModal(popupNewCard);
-    
+  evt.preventDefault();
+  const cardData = {};
+  cardData.name = inputCardName.value;
+  cardData.link = inputCardPictureUrl.value;
+  const newCard = createCard(cardData, deleteCard);
+  cardsContainer.prepend(newCard);
+  popupNewCardForm.reset();
+  closeModal(popupNewCard);
 }
 
-// Обработчик события добавления новой карточки
-popupNewCard.addEventListener('submit', addNewCard);
-
-// Обработчик события закрытия попапа добавления новой карточки по клику на оверлей
-popupNewCard.addEventListener('click', (evt) => {
-    closePopupByOverlay (evt);
-});
+// Обработчик добавления новой карточки
+popupNewCard.addEventListener("submit", addNewCard);
 
 
-//Попап вывода полноразмерной картинки
+// ПОПАП ОТКРЫТИЯ МОДАЛЬНОГО ОКНА ИЗОБРАЖЕНИЯ КАРТОЧКИ
 
-export const popupFullSizeImage = document.querySelector('.popup_type_image')
-const popupFullSizeImageCloseButton = popupFullSizeImage.querySelector('.popup__close');
-popupFullSizeImageCloseButton.addEventListener('click', function() {
-    closeModal(popupFullSizeImage);
-    
+const popupFullSizeImage = document.querySelector(".popup_type_image");
+const popupFullSizeImageCloseButton =
+  popupFullSizeImage.querySelector(".popup__close");
+
+// Обработчик события закрытия попапа вывода полноразмерной картинки по клику на кнопку
+popupFullSizeImageCloseButton.addEventListener("click", function () {
+  closeModal(popupFullSizeImage);
 });
 
 // Обработчик события закрытия попапа вывода полноразмерной картинки по клику на оверлэй
-popupFullSizeImage.addEventListener('click', (evt) => {
-    closePopupByOverlay (evt);
+popupFullSizeImage.addEventListener("click", (evt) => {
+  closePopupByOverlay(evt);
 });
 
+// функция вызова полноразмерного изображения карточки
 
+export function cardImageZoomUp(newCardElement) {
+  const fullSizeImage = document.querySelector(".popup__image");
+  const fullSizeImageCaption = document.querySelector(".popup__caption");
+  const imageUrl = newCardElement.querySelector(".card__image").src;
+  const imageCaption = newCardElement.querySelector(".card__image").alt;
+
+  fullSizeImage.src = imageUrl;
+  fullSizeImage.alt = imageCaption;
+
+  fullSizeImageCaption.textContent = imageCaption;
+  openModal(popupFullSizeImage);
+}
