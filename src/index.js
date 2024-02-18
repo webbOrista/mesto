@@ -2,7 +2,7 @@
 import "./pages/index.css";
 
 //импорт функций
-import { createCard, deleteCard } from "./scripts/card.js";
+import { createCard, deleteCard, likeCard } from "./scripts/card.js";
 import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 
 //импорт массива начальных карточек
@@ -14,7 +14,7 @@ const popup = document.querySelector(".popup");
 
 //добавляем начальные карточки на страницу
 initialCards.forEach((item) => {
-  const card = createCard(item, deleteCard);
+  const card = createCard(item, deleteCard, zoomUpCardImage, likeCard);
   cardsContainer.append(card);
 });
 
@@ -46,12 +46,12 @@ popupEditProfile.addEventListener("click", (evt) => {
 });
 
 // выбираем элементы формы ввода данных попапа редактирования профиля
-const formElement = document.querySelector(".popup__form");
+const popupEditProfileForm = document.querySelector(".popup__form");
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 
 // обработчик отправки данных из формы попапа редактирования профиля
-function handleFormSubmit(evt) {
+function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
@@ -59,7 +59,7 @@ function handleFormSubmit(evt) {
 }
 
 // обработчик нажатия кнопки submit на форме редактирования профиля
-formElement.addEventListener("submit", handleFormSubmit);
+popupEditProfileForm.addEventListener("submit", handleEditProfileFormSubmit);
 
 // ПОПАП ДОБАВЛЕНИЯ НОВЫХ КАРТОЧЕК
 
@@ -94,7 +94,7 @@ function addNewCard(evt) {
   const cardData = {};
   cardData.name = inputCardName.value;
   cardData.link = inputCardPictureUrl.value;
-  const newCard = createCard(cardData, deleteCard);
+  const newCard = createCard(cardData, deleteCard, zoomUpCardImage, likeCard);
   cardsContainer.prepend(newCard);
   popupNewCardForm.reset();
   closeModal(popupNewCard);
@@ -102,7 +102,6 @@ function addNewCard(evt) {
 
 // Обработчик добавления новой карточки
 popupNewCard.addEventListener("submit", addNewCard);
-
 
 // ПОПАП ОТКРЫТИЯ МОДАЛЬНОГО ОКНА ИЗОБРАЖЕНИЯ КАРТОЧКИ
 
@@ -121,16 +120,13 @@ popupFullSizeImage.addEventListener("click", (evt) => {
 });
 
 // функция вызова полноразмерного изображения карточки
+const fullSizeImage = document.querySelector(".popup__image");
+const fullSizeImageCaption = document.querySelector(".popup__caption");
 
-export function cardImageZoomUp(newCardElement) {
-  const fullSizeImage = document.querySelector(".popup__image");
-  const fullSizeImageCaption = document.querySelector(".popup__caption");
-  const imageUrl = newCardElement.querySelector(".card__image").src;
-  const imageCaption = newCardElement.querySelector(".card__image").alt;
+export function zoomUpCardImage(cardImage, cardTitle) {
+  fullSizeImage.src = cardImage.src;
+  fullSizeImage.alt = cardTitle.alt;
 
-  fullSizeImage.src = imageUrl;
-  fullSizeImage.alt = imageCaption;
-
-  fullSizeImageCaption.textContent = imageCaption;
+  fullSizeImageCaption.textContent = cardTitle.textContent;
   openModal(popupFullSizeImage);
 }

@@ -1,10 +1,8 @@
 //В файле описана логика работы с карточками
 
-import { cardImageZoomUp } from "../index.js";
-
 //Функция создания карточки
 
-export function createCard(item, deleteCard, likeCard) {
+export function createCard(item, deleteCard, zoomUpCardImage, likeCard) {
   const cardTemplate = document.querySelector("#card-template").content;
   const newCardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = newCardElement.querySelector(".card__image");
@@ -20,20 +18,14 @@ export function createCard(item, deleteCard, likeCard) {
 
   deleteButton.addEventListener("click", () => deleteCard(newCardElement));
 
-  //Функция добавления лайка карточке
-
-  function likeCard() {
-    cardLikeButton.classList.toggle("card__like-button_is-active");
-  }
-
   //Обработчик кнопки лайка
 
-  cardLikeButton.addEventListener("click", () => likeCard());
+  cardLikeButton.addEventListener("click", () => likeCard(cardLikeButton));
 
   //Обработчик вывода полноразмерной картинки по клику на изображение карточки
-  cardImage.addEventListener("click", () => {
-    cardImageZoomUp(newCardElement);
-  });
+  cardImage.addEventListener("click", () =>
+    zoomUpCardImage(cardImage, cardTitle)
+  );
 
   return newCardElement;
 }
@@ -42,4 +34,10 @@ export function createCard(item, deleteCard, likeCard) {
 
 export function deleteCard(item) {
   item.remove();
+}
+
+//Функция добавления лайка карточке
+
+export function likeCard(button) {
+  button.classList.toggle("card__like-button_is-active");
 }

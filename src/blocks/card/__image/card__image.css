@@ -1,7 +1,9 @@
 .card__image {
+  display: flex;
   height: 282px;
   object-fit: cover;
   width: 100%;
+  flex-shrink: 1;
 }
 
 .card__image:hover {
