@@ -6,17 +6,17 @@ import { createCard, deleteCard, likeCard } from "./scripts/card.js";
 import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 
 //импорт массива начальных карточек
-import { initialCards } from "./scripts/cards.js";
+// import { initialCards } from "./scripts/cards.js";
 
 //определение переменных
 const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
 
 //добавляем начальные карточки на страницу
-initialCards.forEach((item) => {
-  const card = createCard(item, deleteCard, zoomUpCardImage, likeCard);
-  cardsContainer.append(card);
-});
+// initialCards.forEach((item) => {
+//   const card = createCard(item, deleteCard, zoomUpCardImage, likeCard);
+//   cardsContainer.append(card);
+// });
 
 // ПОПАП РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
@@ -27,6 +27,7 @@ const popupEditProfileCloseButton =
   popupEditProfile.querySelector(".popup__close");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+
 
 // обработчик открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", function () {
@@ -141,24 +142,53 @@ import { enableValidation, clearValidation, validationConfig } from "./scripts/v
 
 enableValidation(validationConfig);
 
+// ПОДКЛЮЧЕНИЕ САЙТА К СЕРВЕРУ, РАБОТА С API
+
+import {config, resolveCheck } from './scripts/api.js'
+
+const avatar = document.querySelector(".profile__image")
+// const userId = "";
 
 
+// Запрос на получение данных пользователя от сервера
 
-// Также в index.js находится код, который отвечает за загрузку карточек и данных пользователя при открытии страницы.
+function getInitialUserData(){
+  return fetch(`${config.baseUrl}/users/me`,{
+      method: "GET",
+      headers: config.headers,})
+      .then(result => resolveCheck(result))
+      .then((data)=>{
+          avatar.style.backgroundImage = `url(${data.avatar})`;
+          profileTitle.textContent = data.name;
+          profileDescription.textContent = data.about;
+          // userId = data._id;
+      })
+
+}
+
+getInitialUserData();
+
+
+// Запрос на получение начальных карточек с сервера
+
+function getInitialCards(){
+  return fetch(`${config.baseUrl}/cards`,{
+    method: "GET",
+    headers: config.headers,})
+    .then(result => resolveCheck(result))
+    .then((cards)=> {
+      cards.forEach((card) => {
+        cardsContainer.append(createCard(card, deleteCard, zoomUpCardImage, likeCard))
+      })
+
+    })
+}
+
+getInitialCards()
+
 
 // в package.json описан скрипты predeploy и deploy выполняющие сборку и деплой приложения;
 
-// Получаем начальные карточки с сервера
-
-// import { getInitialCards } from './scripts/api.js'
-
-// getInitialCards()
-// .then((result) => {
-//   // обрабатываем результат
-// })
-// .catch((err) => {
-//   console.log(err); // выводим ошибку в консоль
-// });
 
 
 
