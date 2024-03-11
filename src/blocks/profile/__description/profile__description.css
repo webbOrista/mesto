@@ -4,7 +4,7 @@
   grid-area: description;
   margin: 0;
   max-width: 30vw;
-  white-space: nowrap;
+  max-height: 20vw;
   overflow: hidden;
   text-overflow: ellipsis;
 }

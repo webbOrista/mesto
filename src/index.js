@@ -27,11 +27,13 @@ const popupEditProfileCloseButton =
   popupEditProfile.querySelector(".popup__close");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+// const profileForm = document.forms["edit-profile"];
 
 // обработчик открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", function () {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
+  // clearValidation(popupEditProfile, validationConfig);
   openModal(popupEditProfile);
 });
 
@@ -130,3 +132,48 @@ export function zoomUpCardImage(cardImage, cardTitle) {
   fullSizeImageCaption.textContent = cardTitle.textContent;
   openModal(popupFullSizeImage);
 }
+
+
+
+// ВАЛИДАЦИЯ ФОРМ и новая логика получения файлов
+
+// Также в index.js находится код, который отвечает за загрузку карточек и данных пользователя при открытии страницы.
+
+// в package.json описан скрипты predeploy и deploy выполняющие сборку и деплой приложения;
+
+// Получаем начальные карточки с сервера
+
+// import { getInitialCards } from './scripts/api.js'
+
+// getInitialCards()
+// .then((result) => {
+//   // обрабатываем результат
+// })
+// .catch((err) => {
+//   console.log(err); // выводим ошибку в консоль
+// });
+
+
+import { enableValidation, clearValidation } from "./scripts/validation.js";
+
+enableValidation();
+
+// enableValidation({
+//   formSelector: '.popup__form',
+//   inputSelector: '.popup__input',
+//   submitButtonSelector: '.popup__button',
+//   inactiveButtonClass: 'form__submit_inactive',
+//   inputErrorClass: 'form__input_type_error',
+//   errorClass: 'form__input-error_active'
+// });
+
+
+// export const validationConfig = {
+//   formSelector: '.popup__form',
+//   inputSelector: '.popup__input',
+//   submitButtonSelector: '.popup__button',
+//   inactiveButtonClass: 'form__submit_inactive',
+//   inputErrorClass: 'form__input_type_error',
+//   errorClass: 'form__input-error_active'
+// };
+

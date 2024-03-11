@@ -41,3 +41,8 @@ export function deleteCard(item) {
 export function likeCard(button) {
   button.classList.toggle("card__like-button_is-active");
 }
+
+
+// Новая логика
+// функция создания карточки принимает в качестве параметров данные карточки,
+// функции обработки её событий и id текущего пользователя;
