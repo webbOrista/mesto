@@ -27,13 +27,12 @@ const popupEditProfileCloseButton =
   popupEditProfile.querySelector(".popup__close");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
-// const profileForm = document.forms["edit-profile"];
 
 // обработчик открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", function () {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
-  // clearValidation(popupEditProfile, validationConfig);
+  clearValidation(popupEditProfile, validationConfig);
   openModal(popupEditProfile);
 });
 
@@ -72,6 +71,8 @@ const popupNewCardCloseButton = popupNewCard.querySelector(".popup__close");
 
 // Обработчик открытия попапа добавления новой карточки
 newCardAddButton.addEventListener("click", function () {
+  clearValidation(popupNewCard, validationConfig);
+  popupNewCardForm.reset();
   openModal(popupNewCard);
 });
 
@@ -134,8 +135,14 @@ export function zoomUpCardImage(cardImage, cardTitle) {
 }
 
 
-
 // ВАЛИДАЦИЯ ФОРМ и новая логика получения файлов
+
+import { enableValidation, clearValidation, validationConfig } from "./scripts/validation.js";
+
+enableValidation(validationConfig);
+
+
+
 
 // Также в index.js находится код, который отвечает за загрузку карточек и данных пользователя при открытии страницы.
 
@@ -154,26 +161,8 @@ export function zoomUpCardImage(cardImage, cardTitle) {
 // });
 
 
-import { enableValidation, clearValidation } from "./scripts/validation.js";
-
-enableValidation();
-
-// enableValidation({
-//   formSelector: '.popup__form',
-//   inputSelector: '.popup__input',
-//   submitButtonSelector: '.popup__button',
-//   inactiveButtonClass: 'form__submit_inactive',
-//   inputErrorClass: 'form__input_type_error',
-//   errorClass: 'form__input-error_active'
-// });
 
 
-// export const validationConfig = {
-//   formSelector: '.popup__form',
-//   inputSelector: '.popup__input',
-//   submitButtonSelector: '.popup__button',
-//   inactiveButtonClass: 'form__submit_inactive',
-//   inputErrorClass: 'form__input_type_error',
-//   errorClass: 'form__input-error_active'
-// };
+
+
 
