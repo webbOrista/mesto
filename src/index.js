@@ -9,8 +9,9 @@ import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 // import { initialCards } from "./scripts/cards.js";
 
 //определение переменных
-const cardsContainer = document.querySelector(".places__list");
+export const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
+export const avatar = document.querySelector(".profile__image");
 
 //добавляем начальные карточки на страницу
 // initialCards.forEach((item) => {
@@ -27,7 +28,6 @@ const popupEditProfileCloseButton =
   popupEditProfile.querySelector(".popup__close");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
-
 
 // обработчик открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", function () {
@@ -55,9 +55,21 @@ const jobInput = document.querySelector(".popup__input_type_description");
 // обработчик отправки данных из формы попапа редактирования профиля
 function handleEditProfileFormSubmit(evt) {
   evt.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
-  closeModal(popup);
+  const name = nameInput.value;
+  const occupation = jobInput.value;
+  evt.submitter.textContent = "Сохранение...";
+  updateProfileDataRequest(name, occupation)
+    .then(() => {
+      profileTitle.textContent = nameInput.value;
+      profileDescription.textContent = jobInput.value;
+      closeModal(popup);
+    })
+    .catch((err) => {
+      console.error("Ошибка:", err);
+    })
+    .finally(() => {
+      evt.submitter.textContent = "Сохранить";
+    });
 }
 
 // обработчик нажатия кнопки submit на форме редактирования профиля
@@ -95,13 +107,24 @@ const popupNewCardForm = document.forms["new-place"];
 // Функция добавления новой карточки по нажатию на кнопку "+"
 function addNewCard(evt) {
   evt.preventDefault();
-  const cardData = {};
-  cardData.name = inputCardName.value;
-  cardData.link = inputCardPictureUrl.value;
-  const newCard = createCard(cardData, deleteCard, zoomUpCardImage, likeCard);
-  cardsContainer.prepend(newCard);
-  popupNewCardForm.reset();
-  closeModal(popupNewCard);
+  // const cardData = {};
+  const name = inputCardName.value;
+  const link = inputCardPictureUrl.value;
+  evt.submitter.textContent = "Сохранение...";
+  createNewCardRequest(name, link, userId)
+    .then((cardData) => {
+      cardsContainer.prepend(
+        createCard(cardData, deleteCard, zoomUpCardImage, likeCard)
+      );
+      popupNewCardForm.reset();
+      closeModal(popupNewCard);
+    })
+    .catch((err) => {
+      console.error("Ошибка:", err);
+    })
+    .finally(() => {
+      evt.submitter.textContent = "Сохранить";
+    });
 }
 
 // Обработчик добавления новой карточки
@@ -135,64 +158,39 @@ export function zoomUpCardImage(cardImage, cardTitle) {
   openModal(popupFullSizeImage);
 }
 
-
 // ВАЛИДАЦИЯ ФОРМ и новая логика получения файлов
 
-import { enableValidation, clearValidation, validationConfig } from "./scripts/validation.js";
+import {
+  enableValidation,
+  clearValidation,
+  validationConfig,
+} from "./scripts/validation.js";
 
 enableValidation(validationConfig);
 
 // ПОДКЛЮЧЕНИЕ САЙТА К СЕРВЕРУ, РАБОТА С API
 
-import {config, resolveCheck } from './scripts/api.js'
+import {
+  getInitialUserData,
+  getInitialCards,
+  updateProfileDataRequest,
+  createNewCardRequest,
+} from "./scripts/api.js";
 
-const avatar = document.querySelector(".profile__image")
-// const userId = "";
+let userId;
 
-
-// Запрос на получение данных пользователя от сервера
-
-function getInitialUserData(){
-  return fetch(`${config.baseUrl}/users/me`,{
-      method: "GET",
-      headers: config.headers,})
-      .then(result => resolveCheck(result))
-      .then((data)=>{
-          avatar.style.backgroundImage = `url(${data.avatar})`;
-          profileTitle.textContent = data.name;
-          profileDescription.textContent = data.about;
-          // userId = data._id;
-      })
-
-}
-
-getInitialUserData();
-
-
-// Запрос на получение начальных карточек с сервера
-
-function getInitialCards(){
-  return fetch(`${config.baseUrl}/cards`,{
-    method: "GET",
-    headers: config.headers,})
-    .then(result => resolveCheck(result))
-    .then((cards)=> {
-      cards.forEach((card) => {
-        cardsContainer.append(createCard(card, deleteCard, zoomUpCardImage, likeCard))
-      })
-
-    })
-}
-
-getInitialCards()
-
-
-// в package.json описан скрипты predeploy и deploy выполняющие сборку и деплой приложения;
-
-
-
-
-
-
-
-
+Promise.all([getInitialUserData(), getInitialCards()])
+  .then(([data, cards]) => {
+    avatar.style.backgroundImage = `url(${data.avatar})`;
+    profileTitle.textContent = data.name;
+    profileDescription.textContent = data.about;
+    userId = data._id;
+    cards.forEach((card) => {
+      cardsContainer.append(
+        createCard(card, deleteCard, zoomUpCardImage, likeCard)
+      );
+    });
+  })
+  .catch((err) => {
+    console.error("Ошибка:", err);
+  });
