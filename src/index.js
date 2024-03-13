@@ -9,9 +9,9 @@ import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 // import { initialCards } from "./scripts/cards.js";
 
 //определение переменных
-export const cardsContainer = document.querySelector(".places__list");
+const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
-export const avatar = document.querySelector(".profile__image");
+const avatar = document.querySelector(".profile__image");
 
 //добавляем начальные карточки на страницу
 // initialCards.forEach((item) => {
@@ -43,7 +43,7 @@ popupEditProfileCloseButton.addEventListener("click", function () {
 });
 
 // Обработчик события закрытия попапа редактирования профиля по клику на оверлэй
-popupEditProfile.addEventListener("click", (evt) => {
+popupEditProfile.addEventListener("mousedown", (evt) => {
   closePopupByOverlay(evt);
 });
 
@@ -95,13 +95,13 @@ popupNewCardCloseButton.addEventListener("click", function () {
 });
 
 // Обработчик события закрытия попапа добавления новой карточки по клику на оверлей
-popupNewCard.addEventListener("click", (evt) => {
+popupNewCard.addEventListener("mousedown", (evt) => {
   closePopupByOverlay(evt);
 });
 
 //выбираем элементы формы ввода данных попапа добавления новой карточки
 const inputCardName = document.querySelector(".popup__input_type_card-name");
-const inputCardPictureUrl = document.querySelector(".popup__input_type_url");
+const inputCardPictureUrl = document.querySelector('input[name="cardLink"]');
 const popupNewCardForm = document.forms["new-place"];
 
 // Функция добавления новой карточки по нажатию на кнопку "+"
@@ -142,7 +142,7 @@ popupFullSizeImageCloseButton.addEventListener("click", function () {
 });
 
 // Обработчик события закрытия попапа вывода полноразмерной картинки по клику на оверлэй
-popupFullSizeImage.addEventListener("click", (evt) => {
+popupFullSizeImage.addEventListener("mousedown", (evt) => {
   closePopupByOverlay(evt);
 });
 
@@ -175,6 +175,7 @@ import {
   getInitialCards,
   updateProfileDataRequest,
   createNewCardRequest,
+  updateProfileAvatarRequest,
 } from "./scripts/api.js";
 
 let userId;
@@ -194,3 +195,50 @@ Promise.all([getInitialUserData(), getInitialCards()])
   .catch((err) => {
     console.error("Ошибка:", err);
   });
+
+// выбираем элементы попапа обновления аватара
+
+const popupUpdateAvatar = document.querySelector(".popup_type_update-avatar");
+const popupUpdateAvatarCloseButton =
+  popupUpdateAvatar.querySelector(".popup__close");
+const popupUpdateAvatarForm = document.forms["update-avatar"];
+const linkInput = document.querySelector('input[name="avatarLink"]');
+
+// Обработчик открытия попапа обновления аватара профиля
+avatar.addEventListener("click", function () {
+  popupUpdateAvatarForm.reset();
+  clearValidation(popupUpdateAvatar, validationConfig);
+  openModal(popupUpdateAvatar);
+});
+
+// обработчик закрытия попапа обновления аватара профиля по клику на кнопку
+popupUpdateAvatarCloseButton.addEventListener("click", function () {
+  closeModal(popupUpdateAvatar);
+});
+
+// Обработчик события закрытия попапа обновления аватара по клику на оверлэй
+popupUpdateAvatar.addEventListener("mousedown", (evt) => {
+  closePopupByOverlay(evt);
+});
+
+// Функция обновления аватара профиля
+
+function updateProfileAvatar(evt) {
+  evt.preventDefault();
+  const avatarLink = linkInput.value;
+  evt.submitter.textContent = "Сохранение...";
+  updateProfileAvatarRequest(avatarLink)
+    .then(() => {
+      avatar.style.backgroundImage = `url(${avatarLink})`;
+      closeModal(popupUpdateAvatar);
+    })
+    .catch((err) => {
+      console.error("Ошибка:", err);
+    })
+    .finally(() => {
+      evt.submitter.textContent = "Сохранить";
+    });
+}
+
+// Обработчик обновления аватара профиля
+popupUpdateAvatar.addEventListener("submit", updateProfileAvatar);
