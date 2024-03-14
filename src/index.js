@@ -13,12 +13,6 @@ const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
 const avatar = document.querySelector(".profile__image");
 
-//добавляем начальные карточки на страницу
-// initialCards.forEach((item) => {
-//   const card = createCard(item, deleteCard, zoomUpCardImage, likeCard);
-//   cardsContainer.append(card);
-// });
-
 // ПОПАП РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
 //выбираем элементы для работы с попапом редактирования профиля
@@ -114,7 +108,7 @@ function addNewCard(evt) {
   createNewCardRequest(name, link, userId)
     .then((cardData) => {
       cardsContainer.prepend(
-        createCard(cardData, deleteCard, zoomUpCardImage, likeCard)
+        createCard(cardData, deleteCard, zoomUpCardImage, likeCard, userId)
       );
       popupNewCardForm.reset();
       closeModal(popupNewCard);
@@ -188,7 +182,7 @@ Promise.all([getInitialUserData(), getInitialCards()])
     userId = data._id;
     cards.forEach((card) => {
       cardsContainer.append(
-        createCard(card, deleteCard, zoomUpCardImage, likeCard)
+        createCard(card, deleteCard, zoomUpCardImage, likeCard, userId)
       );
     });
   })
@@ -242,3 +236,5 @@ function updateProfileAvatar(evt) {
 
 // Обработчик обновления аватара профиля
 popupUpdateAvatar.addEventListener("submit", updateProfileAvatar);
+
+
