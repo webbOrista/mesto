@@ -1,6 +1,10 @@
 //В файле описана логика работы с карточками
 
-import { deleteCardRequest } from "../scripts/api.js";
+import {
+  deleteCardRequest,
+  addLikeToCardRequest,
+  removeLikeFromCardRequest,
+} from "../scripts/api.js";
 
 //Функция создания карточки
 
@@ -8,7 +12,7 @@ export function createCard(
   cardData,
   deleteCard,
   zoomUpCardImage,
-  likeCard,
+  toggleLike,
   userId
 ) {
   const cardTemplate = document.querySelector("#card-template").content;
@@ -17,8 +21,7 @@ export function createCard(
   const cardTitle = newCardElement.querySelector(".card__title");
   const deleteButton = newCardElement.querySelector(".card__delete-button");
   const cardLikeButton = newCardElement.querySelector(".card__like-button");
-  const cardLikeAmountElement =
-    newCardElement.querySelector(".card__like-amount");
+  const cardLikeAmountElement = newCardElement.querySelector(".card__like-amount");
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -27,6 +30,7 @@ export function createCard(
   cardLikeAmountElement.textContent = cardData.likes.length.toString();
 
   //Обработчик кнопки удаления, удалять можно только свои карточки
+
   if (userId === cardData.owner._id) {
     deleteButton.addEventListener("click", () =>
       deleteCard(cardData._id, newCardElement)
@@ -34,7 +38,10 @@ export function createCard(
   } else deleteButton.remove();
 
   //Обработчик кнопки лайка
-  cardLikeButton.addEventListener("click", () => likeCard(cardLikeButton));
+
+  cardLikeButton.addEventListener("click", () =>
+    toggleLike(cardData._id, cardLikeButton, cardLikeAmountElement)
+  );
 
   //Обработчик вывода полноразмерной картинки по клику на изображение карточки
   cardImage.addEventListener("click", () =>
@@ -56,8 +63,28 @@ export function deleteCard(cardId, card) {
     });
 }
 
-//Функция добавления лайка карточке
+//Функция добавления/снятия лайка c карточки
 
-export function likeCard(button) {
-  button.classList.toggle("card__like-button_is-active");
+export function toggleLike(cardId, button, likeAmount) {
+  if (button.classList.contains("card__like-button_is-active")) {
+    removeLikeFromCardRequest(cardId)
+      .then((res) => {
+        const amount = res.likes.length.toString();
+        likeAmount.textContent = amount;
+        button.classList.toggle("card__like-button_is-active");
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      });
+  } else {
+    addLikeToCardRequest(cardId)
+      .then((res) => {
+        const amount = res.likes.length.toString();
+        likeAmount.textContent = amount;
+        button.classList.toggle("card__like-button_is-active");
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      });
+  }
 }

@@ -1,7 +1,3 @@
-// В файле описаны функции для взаимодействия с сервером;
-
-//функции запросов к серверу возвращают Promise, в них нет работы с DOM и изменения отображения страницы.
-
 const serverUrl = "https://nomoreparties.co/v1/wff-cohort-9";
 const authorizationKey = "52e38bc9-9b95-4e67-8615-786acb426380";
 
@@ -95,6 +91,8 @@ export const updateProfileAvatarRequest = (link) => {
   });
 };
 
+// Запрос на удаление карточки
+
 export const deleteCardRequest = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
@@ -107,3 +105,30 @@ export const deleteCardRequest = (cardId) => {
   });
 };
 
+// Запрос на добавление лайка карточке
+
+export const addLikeToCardRequest = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: config.headers,
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+};
+
+// Запрос на снятие лайка с карточки
+
+export const removeLikeFromCardRequest = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+};

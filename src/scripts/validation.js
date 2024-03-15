@@ -1,6 +1,3 @@
-// Функции валидации форм
-
-
 // Функция отображения сообщения о некорретном вводе
 
 function showInputError(
@@ -26,7 +23,7 @@ function hideInputError(formElement, inputElement, validationConfig) {
 
 // Функция проверки валидности инпута (кастомное и дефолтное сообщение)
 
-function isValid(formElement, inputElement) {
+function isValid(formElement, inputElement, validationConfig) {
   if (inputElement.validity.patternMismatch) {
     // данные атрибута доступны у элемента инпута через ключевое слово dataset.
     // в js имя атрибута пишется в camelCase
@@ -51,12 +48,7 @@ function isValid(formElement, inputElement) {
 // Функция, проверяющая есть ли внутри формы хотя бы один невалидный инпут
 
 function hasInvalidInput(inputList) {
-  // проходим по этому массиву методом some
   return inputList.some((inputElement) => {
-    // Если поле не валидно, колбэк вернёт true
-    // Обход массива прекратится и вся функция
-    // hasInvalidInput вернёт true
-
     return !inputElement.validity.valid;
   });
 }
@@ -64,13 +56,10 @@ function hasInvalidInput(inputList) {
 // Функция включающая неактивное состояние кнопки формы, если хотя бы один инпут невалиден
 
 function toggleButtonState(inputList, buttonElement, validationConfig) {
-  // Если есть хотя бы один невалидный инпут
   if (hasInvalidInput(inputList)) {
-    // сделай кнопку неактивной
     buttonElement.setAttribute("disabled", true);
     buttonElement.classList.add(validationConfig.inactiveButtonClass);
   } else {
-    // иначе сделай кнопку активной
     buttonElement.removeAttribute("disabled", true);
     buttonElement.classList.remove(validationConfig.inactiveButtonClass);
   }
@@ -87,7 +76,7 @@ function setEventListeners(formElement, validationConfig) {
   );
   inputList.forEach((inputElement) => {
     inputElement.addEventListener("input", function () {
-      isValid(formElement, inputElement);
+      isValid(formElement, inputElement, validationConfig);
       toggleButtonState(inputList, buttonElement, validationConfig);
     });
   });
@@ -121,11 +110,4 @@ export function clearValidation(formElement, validationConfig) {
   toggleButtonState(inputList, buttonElement, validationConfig);
 }
 
-export const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "form__submit_inactive",
-  inputErrorClass: "form__input_type_error",
-  errorClass: "form__input-error_active",
-};
+

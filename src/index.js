@@ -1,17 +1,13 @@
 //импорт главного файла стилей
 import "./pages/index.css";
 
-//импорт функций
-import { createCard, deleteCard, likeCard } from "./scripts/card.js";
+import { createCard, deleteCard, toggleLike } from "./scripts/card.js";
 import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
 
-//импорт массива начальных карточек
-// import { initialCards } from "./scripts/cards.js";
-
-//определение переменных
 const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
 const avatar = document.querySelector(".profile__image");
+let userId;
 
 // ПОПАП РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
@@ -101,14 +97,13 @@ const popupNewCardForm = document.forms["new-place"];
 // Функция добавления новой карточки по нажатию на кнопку "+"
 function addNewCard(evt) {
   evt.preventDefault();
-  // const cardData = {};
   const name = inputCardName.value;
   const link = inputCardPictureUrl.value;
   evt.submitter.textContent = "Сохранение...";
   createNewCardRequest(name, link, userId)
     .then((cardData) => {
       cardsContainer.prepend(
-        createCard(cardData, deleteCard, zoomUpCardImage, likeCard, userId)
+        createCard(cardData, deleteCard, zoomUpCardImage, toggleLike, userId)
       );
       popupNewCardForm.reset();
       closeModal(popupNewCard);
@@ -147,50 +142,11 @@ const fullSizeImageCaption = document.querySelector(".popup__caption");
 export function zoomUpCardImage(cardImage, cardTitle) {
   fullSizeImage.src = cardImage.src;
   fullSizeImage.alt = cardTitle.alt;
-
   fullSizeImageCaption.textContent = cardTitle.textContent;
   openModal(popupFullSizeImage);
 }
 
-// ВАЛИДАЦИЯ ФОРМ и новая логика получения файлов
-
-import {
-  enableValidation,
-  clearValidation,
-  validationConfig,
-} from "./scripts/validation.js";
-
-enableValidation(validationConfig);
-
-// ПОДКЛЮЧЕНИЕ САЙТА К СЕРВЕРУ, РАБОТА С API
-
-import {
-  getInitialUserData,
-  getInitialCards,
-  updateProfileDataRequest,
-  createNewCardRequest,
-  updateProfileAvatarRequest,
-} from "./scripts/api.js";
-
-let userId;
-
-Promise.all([getInitialUserData(), getInitialCards()])
-  .then(([data, cards]) => {
-    avatar.style.backgroundImage = `url(${data.avatar})`;
-    profileTitle.textContent = data.name;
-    profileDescription.textContent = data.about;
-    userId = data._id;
-    cards.forEach((card) => {
-      cardsContainer.append(
-        createCard(card, deleteCard, zoomUpCardImage, likeCard, userId)
-      );
-    });
-  })
-  .catch((err) => {
-    console.error("Ошибка:", err);
-  });
-
-// выбираем элементы попапа обновления аватара
+// ПОПАП ОБНОВЛЕНИЯ АВАТАРА
 
 const popupUpdateAvatar = document.querySelector(".popup_type_update-avatar");
 const popupUpdateAvatarCloseButton =
@@ -210,13 +166,12 @@ popupUpdateAvatarCloseButton.addEventListener("click", function () {
   closeModal(popupUpdateAvatar);
 });
 
-// Обработчик события закрытия попапа обновления аватара по клику на оверлэй
+// Обработчик закрытия попапа обновления аватара по клику на оверлэй
 popupUpdateAvatar.addEventListener("mousedown", (evt) => {
   closePopupByOverlay(evt);
 });
 
 // Функция обновления аватара профиля
-
 function updateProfileAvatar(evt) {
   evt.preventDefault();
   const avatarLink = linkInput.value;
@@ -237,4 +192,44 @@ function updateProfileAvatar(evt) {
 // Обработчик обновления аватара профиля
 popupUpdateAvatar.addEventListener("submit", updateProfileAvatar);
 
+// ПОДКЛЮЧЕНИЕ ВАЛИДАЦИИ ФОРМ
 
+import { enableValidation, clearValidation } from "./scripts/validation.js";
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "form_submit_inactive",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input-error_active",
+};
+
+enableValidation(validationConfig);
+
+// ПОДКЛЮЧЕНИЕ САЙТА К СЕРВЕРУ, РАБОТА С API
+
+import {
+  getInitialUserData,
+  getInitialCards,
+  updateProfileDataRequest,
+  createNewCardRequest,
+  updateProfileAvatarRequest,
+} from "./scripts/api.js";
+
+// Получение данных профиля и данных для отрисовки начальных карточек
+Promise.all([getInitialUserData(), getInitialCards()])
+  .then(([data, cards]) => {
+    avatar.style.backgroundImage = `url(${data.avatar})`;
+    profileTitle.textContent = data.name;
+    profileDescription.textContent = data.about;
+    userId = data._id;
+    cards.forEach((card) => {
+      cardsContainer.append(
+        createCard(card, deleteCard, zoomUpCardImage, toggleLike, userId)
+      );
+    });
+  })
+  .catch((err) => {
+    console.error("Ошибка:", err);
+  });
