@@ -6,6 +6,14 @@ import {
   removeLikeFromCardRequest,
 } from "../scripts/api.js";
 
+const cardTemplate = document.querySelector("#card-template").content;
+
+// Функция клонирования шаблона карточки
+
+export function getCardTemplate(template) {
+  template.querySelector(".card").cloneNode(true);
+}
+
 //Функция создания карточки
 
 export function createCard(
@@ -15,13 +23,15 @@ export function createCard(
   toggleLike,
   userId
 ) {
-  const cardTemplate = document.querySelector("#card-template").content;
+  getCardTemplate(cardTemplate);
+
   const newCardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = newCardElement.querySelector(".card__image");
   const cardTitle = newCardElement.querySelector(".card__title");
   const deleteButton = newCardElement.querySelector(".card__delete-button");
   const cardLikeButton = newCardElement.querySelector(".card__like-button");
-  const cardLikeAmountElement = newCardElement.querySelector(".card__like-amount");
+  const cardLikeAmountElement =
+    newCardElement.querySelector(".card__like-amount");
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
@@ -48,6 +58,8 @@ export function createCard(
     zoomUpCardImage(cardImage, cardTitle)
   );
 
+  isLiked(cardData, userId, cardLikeButton);
+
   return newCardElement;
 }
 
@@ -71,7 +83,7 @@ export function toggleLike(cardId, button, likeAmount) {
       .then((res) => {
         const amount = res.likes.length.toString();
         likeAmount.textContent = amount;
-        button.classList.toggle("card__like-button_is-active");
+        button.classList.remove("card__like-button_is-active");
       })
       .catch((err) => {
         console.error("Ошибка:", err);
@@ -81,10 +93,18 @@ export function toggleLike(cardId, button, likeAmount) {
       .then((res) => {
         const amount = res.likes.length.toString();
         likeAmount.textContent = amount;
-        button.classList.toggle("card__like-button_is-active");
+        button.classList.add("card__like-button_is-active");
       })
       .catch((err) => {
         console.error("Ошибка:", err);
       });
+  }
+}
+
+// Функция определения "был ли поставлен лайк карточке текущим пользователем"
+
+function isLiked(card, userId, button) {
+  if (card.likes.some((user) => user._id === userId)) {
+    button.classList.add("card__like-button_is-active");
   }
 }

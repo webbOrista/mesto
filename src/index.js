@@ -3,6 +3,14 @@ import "./pages/index.css";
 
 import { createCard, deleteCard, toggleLike } from "./scripts/card.js";
 import { openModal, closeModal, closePopupByOverlay } from "./scripts/modal.js";
+import { enableValidation, clearValidation } from "./scripts/validation.js";
+import {
+  getInitialUserData,
+  getInitialCards,
+  updateProfileDataRequest,
+  createNewCardRequest,
+  updateProfileAvatarRequest,
+} from "./scripts/api.js";
 
 const cardsContainer = document.querySelector(".places__list");
 const popup = document.querySelector(".popup");
@@ -192,9 +200,7 @@ function updateProfileAvatar(evt) {
 // Обработчик обновления аватара профиля
 popupUpdateAvatar.addEventListener("submit", updateProfileAvatar);
 
-// ПОДКЛЮЧЕНИЕ ВАЛИДАЦИИ ФОРМ
-
-import { enableValidation, clearValidation } from "./scripts/validation.js";
+// ВАЛИДАЦИЯ ФОРМ
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -207,15 +213,7 @@ const validationConfig = {
 
 enableValidation(validationConfig);
 
-// ПОДКЛЮЧЕНИЕ САЙТА К СЕРВЕРУ, РАБОТА С API
-
-import {
-  getInitialUserData,
-  getInitialCards,
-  updateProfileDataRequest,
-  createNewCardRequest,
-  updateProfileAvatarRequest,
-} from "./scripts/api.js";
+// РАБОТА С API
 
 // Получение данных профиля и данных для отрисовки начальных карточек
 Promise.all([getInitialUserData(), getInitialCards()])
