@@ -10,8 +10,8 @@ const cardTemplate = document.querySelector("#card-template").content;
 
 // Функция клонирования шаблона карточки
 
-export function getCardTemplate(template) {
-  template.querySelector(".card").cloneNode(true);
+function getCardTemplate(template) {
+  return template.querySelector(".card").cloneNode(true);
 }
 
 //Функция создания карточки
@@ -23,15 +23,12 @@ export function createCard(
   toggleLike,
   userId
 ) {
-  getCardTemplate(cardTemplate);
-
-  const newCardElement = cardTemplate.querySelector(".card").cloneNode(true);
+  const newCardElement = getCardTemplate(cardTemplate);
   const cardImage = newCardElement.querySelector(".card__image");
   const cardTitle = newCardElement.querySelector(".card__title");
   const deleteButton = newCardElement.querySelector(".card__delete-button");
   const cardLikeButton = newCardElement.querySelector(".card__like-button");
-  const cardLikeAmountElement =
-    newCardElement.querySelector(".card__like-amount");
+  const cardLikeAmountElement = newCardElement.querySelector(".card__like-amount");
 
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
