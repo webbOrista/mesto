@@ -46,7 +46,7 @@ export function createCard(
 
   //Обработчик кнопки лайка
 
-  cardLikeButton.addEventListener("click", () =>
+  cardLikeButton.addEventListener("mousedown", () =>
     toggleLike(cardData._id, cardLikeButton, cardLikeAmountElement)
   );
 
