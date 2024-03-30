@@ -16,10 +16,3 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* :hover эффект добавлен только на десктоп */
-
-@media screen and (min-width: 1200px) {
-  .card__like-button:hover {
-    opacity: 0.6;
-  }
-}
