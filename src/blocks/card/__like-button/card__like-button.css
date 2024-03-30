@@ -18,10 +18,6 @@
 
 /* :hover эффект добавлен только на десктоп */
 
-.card__like-button:hover {
-  opacity: 1;
-}
-
 @media screen and (min-width: 1200px) {
   .card__like-button:hover {
     opacity: 0.6;
