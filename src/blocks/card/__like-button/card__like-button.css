@@ -1,25 +1,29 @@
 .card__like-button {
   width: 21px;
   height: 18px;
+  margin: 0;
+  border: none;
+  padding: 0;
   background: transparent url("../../../images/like-inactive.svg") no-repeat;
 
   background-size: 21px 18px;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
   -webkit-transition: 0.3s;
   -moz-transition: 0.3s;
   -ms-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
+  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Устранение некорректного поведения :hover на мобильных устройствах */
+/* :hover эффект добавлен только на десктоп */
 
-@media (hover: none) {
-  .card__like-button:active {
+.card__like-button:hover {
+  opacity: 1;
+}
+
+@media screen and (min-width: 1200px) {
+  .card__like-button:hover {
     opacity: 0.6;
   }
 }
