@@ -222,6 +222,7 @@ Promise.all([getInitialUserData(), getInitialCards()])
     profileTitle.textContent = data.name;
     profileDescription.textContent = data.about;
     userId = data._id;
+    localStorage.setItem('userId', userId);
     cards.forEach((card) => {
       cardsContainer.append(
         createCard(card, deleteCard, zoomUpCardImage, toggleLike, userId)

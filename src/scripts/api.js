@@ -1,6 +1,7 @@
-// GitHub Pages - статический хостинг, поэтому ключи здесь, а не в .env(
+// GitHub Pages - статический хостинг, поэтому ключи здесь, а не в .env((
 const serverUrl = "https://nomoreparties.co/v1/wff-cohort-9";
 const authorizationKey = "52e38bc9-9b95-4e67-8615-786acb426380";
+const userId = localStorage.getItem('userId');
 
 export const config = {
   baseUrl: serverUrl,
@@ -37,10 +38,11 @@ export const getInitialCards = () => {
       headers: config.headers,
     })
       .then((res) => checkResolve(res))
-      // Добавил фильтрацию по id, чтобы стартовыми карточками отображались только созданные мной
+      // Добавил фильтрацию по id, чтобы отображались только мои карточки
       .then((cards) => {
-        return cards.filter((card) => card.owner._id === "66dc1b88dde07005db31727c");
+        return cards.filter((card) => card.owner._id === userId);
       })
+      
   );
 };
 
