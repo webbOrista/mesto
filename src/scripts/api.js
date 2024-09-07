@@ -39,7 +39,7 @@ export const getInitialCards = () => {
       .then((res) => checkResolve(res))
       // Добавил фильтрацию по id, чтобы стартовыми карточками отображались только созданные мной
       .then((res) => {
-        res.filter((item) => item._id === "66dc1b88dde07005db31727c");
+        return res.filter((item) => item._id === "66dc1b88dde07005db31727c");
       })
   );
 };
