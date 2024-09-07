@@ -1,3 +1,4 @@
+// GitHub Pages - статический хостинг, поэтому ключи здесь, а не в .env(
 const serverUrl = "https://nomoreparties.co/v1/wff-cohort-9";
 const authorizationKey = "52e38bc9-9b95-4e67-8615-786acb426380";
 
@@ -30,10 +31,17 @@ export const getInitialUserData = () => {
 // Запрос на получение начальных карточек
 
 export const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: "GET",
-    headers: config.headers,
-  }).then((res) => checkResolve(res));
+  return (
+    fetch(`${config.baseUrl}/cards`, {
+      method: "GET",
+      headers: config.headers,
+    })
+      .then((res) => checkResolve(res))
+      // Добавил фильтрацию по id, чтобы стартовыми карточками отображались только созданные мной
+      .then((cards) => {
+        cards.filter((card) => card._id === "66dc1b88dde07005db31727c");
+      })
+  );
 };
 
 // Запрос на обновление данных пользователя при редактировании профиля
